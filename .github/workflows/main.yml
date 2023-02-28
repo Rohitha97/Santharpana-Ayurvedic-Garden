@@ -1,16 +1,21 @@
-on: push
-name: 🚀 Deploy website on push
+name: Deploy to Aruba
+
+on:
+  push:
+    branches:
+      - main
+
 jobs:
-  web-deploy:
-    name: 🎉 Deploy
+  deploy:
     runs-on: ubuntu-latest
+
     steps:
-    - name: 🚚 Get latest code
-      uses: actions/checkout@v3
-    
-    - name: 📂 Sync files
-      uses: SamKirkland/FTP-Deploy-Action@4.3.3
-      with:
-        server: ftp.straniericattolici.it
-        username: 15090208@aruba.it
-        password: ${{ secrets.PRO }}
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Install FTP
+        run: sudo apt-get install -y lftp
+
+      - name: Deploy
+        run: |
+          lftp -c "set ftp:ssl-allow no; open -u ${{ secrets.USER_NAME }},${{ secrets.PRO }} ${{ secrets.SERVER }};"
